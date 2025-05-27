@@ -61,7 +61,10 @@ module.exports = grammar({
     // Ambiguous when used in an explicit delegation expression,
     // since the '{' could either be interpreted as the class body
     // or as the anonymous function body. Consider the following sequence:
-
+    
+    // prefix-op vs call vs comparison (`!foo<Int>` or `!a < b`)
+    [$.call_expression, $.prefix_expression, $.comparison_expression],
+      
     // Member access operator '::' conflicts with callable reference
     [$._primary_expression, $.callable_reference],
 
@@ -618,8 +621,9 @@ module.exports = grammar({
 
     _expression: $ => choice(
       $._binary_expression,
+      $._primary_expression,
       $._unary_expression,
-      $._primary_expression
+
     ),
 
     // Unary expressions
@@ -641,7 +645,11 @@ module.exports = grammar({
 
     navigation_expression: $ => prec.left(PREC.POSTFIX, seq($._expression, $.navigation_suffix)),
 
-    prefix_expression: $ => prec.right(seq(choice($.annotation, $.label, $._prefix_unary_operator), $._expression)),
+    prefix_expression: $ => choice(
+      prec.right(PREC.PREFIX, seq($._prefix_unary_operator, $._expression)),
+      seq($.label, $._expression),
+      seq($.annotation, $._expression)
+    ),
 
     as_expression: $ => prec.left(PREC.AS, seq($._expression, $._as_operator, $._type)),
 
