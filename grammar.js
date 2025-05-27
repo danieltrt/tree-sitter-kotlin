@@ -617,8 +617,8 @@ module.exports = grammar({
     // ==========
 
     _expression: $ => choice(
-      $._unary_expression,
       $._binary_expression,
+      $._unary_expression,
       $._primary_expression
     ),
 
