@@ -8046,10 +8046,6 @@
         {
           "type": "interpolated_identifier",
           "named": true
-        },
-        {
-          "type": "string_content",
-          "named": true
         }
       ]
     }
@@ -9761,10 +9757,6 @@
   {
     "type": "setparam",
     "named": false
-  },
-  {
-    "type": "string_content",
-    "named": true
   },
   {
     "type": "super",

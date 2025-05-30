@@ -3916,7 +3916,7 @@
             "members": [
               {
                 "type": "SYMBOL",
-                "name": "string_content"
+                "name": "_string_content"
               },
               {
                 "type": "SYMBOL",
@@ -6475,7 +6475,7 @@
     },
     {
       "type": "SYMBOL",
-      "name": "string_content"
+      "name": "_string_content"
     }
   ],
   "inline": [],
