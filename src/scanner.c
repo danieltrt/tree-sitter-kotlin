@@ -66,7 +66,7 @@ static void push(Stack *stack, char chr, bool triple) {
 
 static Delimiter pop(Stack *stack) {
   if (stack->len == 0) abort();
-  return stack->arr[stack->len--];
+  return stack->arr[--stack->len];
 }
 
 static unsigned serialize_stack(Stack *stack, char *buffer) {
@@ -270,7 +270,9 @@ static bool scan_for_word(TSLexer *lexer, const char* word, unsigned len) {
       if (lexer->lookahead != word[i]) return false;
       skip(lexer);
     }
-    return true;
+    // Ensure we matched a complete word, not just a prefix
+    // (e.g. "import" should not match "importantValue")
+    return !iswalpha(lexer->lookahead) && lexer->lookahead != '_' && !iswdigit(lexer->lookahead);
 }
 
 static bool scan_automatic_semicolon(TSLexer *lexer) {
@@ -319,17 +321,15 @@ static bool scan_automatic_semicolon(TSLexer *lexer) {
 
   if (sameline) {
     switch (lexer->lookahead) {
-      // Don't insert a semicolon before an else
-      case 'e':
-        return !scan_for_word(lexer, "lse", 3);
-
-      case 'i':
-        return scan_for_word(lexer, "mport", 5);
-
       case ';':
         advance(lexer);
         lexer->mark_end(lexer);
         return true;
+
+      // Insert a semicolon before `import` on the same line, but not before
+      // other identifiers starting with 'i'.
+      case 'i':
+        return scan_for_word(lexer, "mport", 5);
 
       default:
         return false;
